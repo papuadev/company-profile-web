@@ -76,7 +76,7 @@ export default function Home() {
         {/* Left Side: Image */}
         <div className="w-full md:w-1/2 h-[50vh] md:h-[calc(100vh-4rem)] relative">
           <img
-            src="/img/hero.webp"
+            src={HOME_DATA.image}
             alt="HMNS Perfume Hero"
             className="w-full h-full object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-1000"
           />
@@ -115,7 +115,7 @@ export default function Home() {
             </div>
             <div className="relative aspect-square overflow-hidden rounded-sm bg-muted/50">
               <img
-                src="https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?auto=format&fit=crop&q=80&w=800"
+                src={ABOUT_DATA.image}
                 alt="HMNS Perfume Crafting"
                 className="object-cover w-full h-full grayscale hover:grayscale-0 transition-all duration-700"
               />
