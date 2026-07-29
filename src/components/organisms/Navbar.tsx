@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, LayoutDashboard } from "lucide-react";
-import { COMPANY_INFO, NAVIGATION_LINKS } from "../../data/constants";
+import { NAVIGATION_LINKS } from "../../data/constants";
 import { useAuthStore } from "../../lib/store";
 
 export default function Navbar() {

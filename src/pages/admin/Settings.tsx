@@ -36,7 +36,11 @@ export default function Settings() {
       // Backendless doesn't have a direct "change password" if we don't know the identity for sure,
       // but typically we can use `Backendless.UserService.login` to verify the current password,
       // then update the password field and save the user.
-      await Backendless.UserService.login(identity, data.currentPassword, true);
+      const token = Backendless.LocalCache.get("user-token");
+      if (token && typeof token === "string") {
+        await Backendless.UserService.logout();
+      }
+      await Backendless.UserService.login(identity as string, data.currentPassword, true);
       
       currentUser.password = data.newPassword;
       await Backendless.UserService.update(currentUser);

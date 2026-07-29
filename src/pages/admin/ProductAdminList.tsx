@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Backendless from '../../lib/backendless';
 import { Plus, Edit, Trash2 } from 'lucide-react';
-import { toast } from "sonner";
+import { useProducts } from '../../hooks/useProducts';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,49 +13,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-interface Product {
-  objectId: string;
-  name: string;
-  price: number;
-  category: string;
-  description: string;
-  imageUrl: string;
-  created: number;
-}
-
 export default function ProductAdminList() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { products, loading, deleteProduct } = useProducts();
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
 
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const queryBuilder = Backendless.DataQueryBuilder.create();
-      queryBuilder.setSortBy(['created DESC']);
-      const result = await Backendless.Data.of('Products').find(queryBuilder);
-      setProducts(result as Product[]);
-    } catch (error) {
-      console.error("Failed to fetch products", error);
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const handleDelete = async (objectId: string) => {
-    try {
-      await Backendless.Data.of('Products').remove({ objectId });
-      setProducts(products.filter(p => p.objectId !== objectId));
-      toast.success("Product deleted successfully");
-    } catch (error: any) {
-      console.error("Failed to delete product", error);
-      toast.error(error.message || "Failed to delete product");
-    }
-  };
+
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(price);
@@ -151,7 +112,7 @@ export default function ProductAdminList() {
                             <AlertDialogFooter>
                               <AlertDialogCancel className="bg-zinc-800 text-white border-transparent hover:bg-zinc-700 hover:text-white">Cancel</AlertDialogCancel>
                               <AlertDialogAction 
-                                onClick={() => handleDelete(product.objectId)}
+                                onClick={() => deleteProduct(product.objectId)}
                                 className="bg-red-600 text-white hover:bg-red-700"
                               >
                                 Continue

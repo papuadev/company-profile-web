@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Backendless from '../../lib/backendless';
 import { Plus, Edit, Trash2 } from 'lucide-react';
-import { toast } from "sonner";
+import { useBlogs } from '../../hooks/useBlogs';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,48 +13,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-interface Blog {
-  objectId: string;
-  title: string;
-  excerpt: string;
-  thumbnailUrl: string;
-  created: number;
-}
-
 export default function BlogAdminList() {
-  const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { blogs, loading, deleteBlog } = useBlogs();
 
-  useEffect(() => {
-    fetchBlogs();
-  }, []);
 
-  const fetchBlogs = async () => {
-    try {
-      setLoading(true);
-      const queryBuilder = Backendless.DataQueryBuilder.create();
-      queryBuilder.setSortBy(['created DESC']);
-      const result = await Backendless.Data.of('Blogs').find(queryBuilder);
-      setBlogs(result as Blog[]);
-    } catch (error) {
-      console.error("Failed to fetch blogs", error);
-      // Might be because table doesn't exist yet, which is fine
-      setBlogs([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const handleDelete = async (objectId: string) => {
-    try {
-      await Backendless.Data.of('Blogs').remove({ objectId });
-      setBlogs(blogs.filter(b => b.objectId !== objectId));
-      toast.success("Blog deleted successfully");
-    } catch (error: any) {
-      console.error("Failed to delete blog", error);
-      toast.error(error.message || "Failed to delete blog");
-    }
-  };
+
 
   return (
     <div>
@@ -144,7 +106,7 @@ export default function BlogAdminList() {
                             <AlertDialogFooter>
                               <AlertDialogCancel className="bg-zinc-800 text-white border-transparent hover:bg-zinc-700 hover:text-white">Cancel</AlertDialogCancel>
                               <AlertDialogAction 
-                                onClick={() => handleDelete(blog.objectId)}
+                                onClick={() => deleteBlog(blog.objectId)}
                                 className="bg-red-600 text-white hover:bg-red-700"
                               >
                                 Continue

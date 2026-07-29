@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 const productSchema = z.object({
   name: z.string().min(1, "Product name is required"),
-  price: z.number({ invalid_type_error: "Price must be a number" }).min(0, "Price cannot be negative"),
+  price: z.number().min(0, "Price must be a positive number"),
   category: z.string().min(1, "Category is required"),
   description: z.string().min(1, "Description is required"),
 });
@@ -39,11 +39,11 @@ export default function ProductAdminForm() {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      const product = await Backendless.Data.of('Products').findById(id as string);
+      const product: any = await Backendless.Data.of('Products').findById(id as string);
       setValue('name', product.name);
       setValue('price', product.price);
-      setValue('category', product.category);
-      setValue('description', product.description);
+      setValue('category', product.category || '');
+      setValue('description', product.description || '');
       if (product.imageUrl) {
         setImagePreview(product.imageUrl);
       }

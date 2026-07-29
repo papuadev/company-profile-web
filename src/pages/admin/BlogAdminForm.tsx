@@ -41,7 +41,7 @@ export default function BlogAdminForm() {
   const fetchBlog = async () => {
     try {
       setLoading(true);
-      const blog = await Backendless.Data.of('Blogs').findById(id as string);
+      const blog: any = await Backendless.Data.of('Blogs').findById(id as string);
       setValue('title', blog.title);
       setValue('excerpt', blog.excerpt);
       setValue('content', blog.content);

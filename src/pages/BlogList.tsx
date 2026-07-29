@@ -1,37 +1,10 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Backendless from '../lib/backendless';
-
-interface Blog {
-  objectId: string;
-  title: string;
-  excerpt: string;
-  thumbnailUrl: string;
-  created: number;
-}
+import { useBlogs } from '../hooks/useBlogs';
 
 export default function BlogList() {
-  const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { blogs, loading } = useBlogs();
 
-  useEffect(() => {
-    fetchBlogs();
-  }, []);
 
-  const fetchBlogs = async () => {
-    try {
-      setLoading(true);
-      const queryBuilder = Backendless.DataQueryBuilder.create();
-      queryBuilder.setSortBy(['created DESC']);
-      const result = await Backendless.Data.of('Blogs').find(queryBuilder);
-      setBlogs(result as Blog[]);
-    } catch (error) {
-      console.error("Failed to fetch blogs", error);
-      setBlogs([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background py-20">

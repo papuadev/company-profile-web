@@ -1,42 +1,15 @@
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import Backendless from "../lib/backendless";
 import { X } from "lucide-react";
-
-interface Product {
-  objectId: string;
-  name: string;
-  price: number;
-  category: string;
-  description: string;
-  imageUrl: string;
-  created: number;
-}
+import { useProducts } from "../hooks/useProducts";
+import type { Product } from "../types";
 
 export default function Products() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { products, loading } = useProducts();
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
 
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const queryBuilder = Backendless.DataQueryBuilder.create();
-      queryBuilder.setSortBy(['created DESC']);
-      const result = await Backendless.Data.of('Products').find(queryBuilder);
-      setProducts(result as Product[]);
-    } catch (error) {
-      console.error("Failed to fetch products", error);
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const categories = ["All", ...Array.from(new Set(products.map(p => p.category).filter(Boolean)))];
 
