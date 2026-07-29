@@ -16,6 +16,8 @@ const DUMMY_TEAM: TeamMember[] = [
 export default function TeamsSection() {
   const [team, setTeam] = useState<TeamMember[]>([])
   const [loading, setLoading] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
+  const [visibleImages, setVisibleImages] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -31,6 +33,39 @@ export default function TeamsSection() {
     }
     fetchTeams()
   }, [])
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
+
+  useEffect(() => {
+    if (!isMobile) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setVisibleImages((prev) => {
+          const newState = { ...prev }
+          let changed = false
+          entries.forEach((entry) => {
+            const id = entry.target.id
+            if (newState[id] !== entry.isIntersecting) {
+              newState[id] = entry.isIntersecting
+              changed = true
+            }
+          })
+          return changed ? newState : prev
+        })
+      },
+      { threshold: 0.5 }
+    )
+    const elements = document.querySelectorAll(".team-scroll-color-target")
+    elements.forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [isMobile, team])
 
   return (
     <section id="teams" className="w-full py-24 bg-background">
@@ -52,9 +87,12 @@ export default function TeamsSection() {
               <div key={member.login.uuid} className="group flex flex-col items-center text-center space-y-4">
                 <div className="relative w-32 h-32 overflow-hidden rounded-full border-2 border-border transition-transform group-hover:scale-105 group-hover:border-white">
                   <img
+                    id={`team-img-${member.login.uuid}`}
                     src={member.picture.large}
                     alt={`${member.name.first} ${member.name.last}`}
-                    className="object-cover w-full h-full grayscale hover:grayscale-0 transition-all duration-300"
+                    className={`object-cover w-full h-full md:grayscale md:hover:grayscale-0 transition-all duration-300 team-scroll-color-target ${
+                      isMobile && !visibleImages[`team-img-${member.login.uuid}`] ? "grayscale" : ""
+                    }`}
                   />
                 </div>
                 <div>
