@@ -10,8 +10,9 @@ export const COMPANY_INFO = {
 export const NAVIGATION_LINKS = [
   { label: "Home", href: "/#hero" },
   { label: "About Us", href: "/#about" },
-  { label: "Products", href: "/#products" },
+  { label: "Popular Product", href: "/#products" },
   { label: "Teams", href: "/#teams" },
+  { label: "Catalog", href: "/products" },
   { label: "Blog", href: "/blog" },
 ];
 
